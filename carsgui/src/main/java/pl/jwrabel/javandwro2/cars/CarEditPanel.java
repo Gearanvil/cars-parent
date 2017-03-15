@@ -3,6 +3,7 @@ package pl.jwrabel.javandwro2.cars;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.DoubleSummaryStatistics;
 
 /**
  * Created by jakubwrabel on 13.03.2017.
@@ -10,14 +11,16 @@ import java.awt.event.ActionEvent;
 public class CarEditPanel extends JPanel {
     private Car editedCar;
     private CarsManagerWindow window;
+    private CarRepository carRepository;
 
     JTextField txtBrand;
     JTextField txtModel;
     JTextField txtManYear;
     JTextField txtPower;
 
-    public CarEditPanel(CarsManagerWindow carsManagerWindow) {
+    public CarEditPanel(CarsManagerWindow carsManagerWindow, CarRepository carRepository) {
         this.window = carsManagerWindow;
+        this.carRepository = carRepository;
 
         setSize(300, 300);
         setBackground(Color.GREEN);
@@ -70,6 +73,13 @@ public class CarEditPanel extends JPanel {
         btnSave.setSize(100, 50);
         add(btnSave);
 
+        JButton btnSaveToRepository = new JButton("Zapisz do listy");
+        btnSaveToRepository.setLocation(100, 60);
+        btnSaveToRepository.setSize(100, 50);
+        add(btnSaveToRepository);
+
+
+
         btnSave.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,6 +90,20 @@ public class CarEditPanel extends JPanel {
                 editedCar.setPower(Double.parseDouble(txtPower.getText()));
 
                 window.repaint();
+            }
+        });
+        btnSaveToRepository.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String brand = txtBrand.getText();
+                String model = txtModel.getText();
+                int manYear = Integer.parseInt(txtManYear.getText());
+                double power = Double.parseDouble(txtPower.getText());
+                Car car = new Car(brand, model,manYear,power);
+                window.getCarRepository().getCarList().add(car);
+                window.updateListFromRepository();
+
+
             }
         });
 

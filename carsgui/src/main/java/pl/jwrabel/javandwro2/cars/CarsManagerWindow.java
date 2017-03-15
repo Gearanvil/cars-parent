@@ -16,6 +16,10 @@ public class CarsManagerWindow extends JFrame {
     private CarRepository carRepository;
     private JList<Car> carJList;
 
+    public CarRepository getCarRepository() {
+        return carRepository;
+    }
+
     public static void main(String[] args) {
         new CarsManagerWindow();
     }
@@ -24,7 +28,7 @@ public class CarsManagerWindow extends JFrame {
         setTitle("Cars manager");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(500, 600);
+        setSize(1000, 600);
         setLayout(null);
 
         carJList = new JList<Car>();
@@ -37,18 +41,25 @@ public class CarsManagerWindow extends JFrame {
         jButton.setLocation(300, 0);
         jButton.setSize(100, 50);
         add(jButton);
-        JButton btnReadFromFile = new JButton("Z pliku");
-        btnReadFromFile.setLocation(300, 110);
-        btnReadFromFile.setSize(100, 50);
-        add(btnReadFromFile);
-
         JButton jBtnSaveToFile = new JButton("Save to file");
         jBtnSaveToFile.setLocation(300, 55);
         jBtnSaveToFile.setSize(100, 50);
         add(jBtnSaveToFile);
 
+        JButton btnReadFromFile = new JButton("Z pliku");
+        btnReadFromFile.setLocation(300, 110);
+        btnReadFromFile.setSize(100, 50);
+        add(btnReadFromFile);
 
-        CarEditPanel carEditPanel = new CarEditPanel(this);
+
+        JButton jBtnRemoveFromList = new JButton("Remove");
+        jBtnRemoveFromList.setLocation(300, 165);
+        jBtnRemoveFromList.setSize(100, 50);
+        add(jBtnRemoveFromList);
+
+
+
+        CarEditPanel carEditPanel = new CarEditPanel(this,getCarRepository());
         carEditPanel.setLocation(400, 0);
         add(carEditPanel);
 
@@ -63,12 +74,20 @@ public class CarsManagerWindow extends JFrame {
         jBtnSaveToFile.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CarRepository car = new CarRepository();
+
                 try {
-                    car.saveStateToFile("savedCarsList.txt");
+                    carRepository.saveStateToFile("savedCarsList.txt");
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            }
+        });
+
+        jBtnRemoveFromList.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 carRepository.getCarList().remove(carJList.getSelectedValue());
+                updateListFromRepository();
             }
         });
         btnReadFromFile.addActionListener(new AbstractAction() {
@@ -99,7 +118,7 @@ public class CarsManagerWindow extends JFrame {
 
     }
 
-    private void updateListFromRepository() {
+    public void updateListFromRepository() {
         List<Car> carList = carRepository.getCarList();
 
         // ZAMIANA LISTY NA TABLICĘ
